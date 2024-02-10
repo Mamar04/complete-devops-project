@@ -15,7 +15,7 @@ pipeline{
 
         }
     
-        stage("Checkout from SCM"){
+        stage("Connection github"){
             steps {
                 git branch: 'main', credentialsId: 'githubcred', url: 'https://github.com/Mamar04/complete-devops-project.git'
             }
