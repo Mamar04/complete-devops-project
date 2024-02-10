@@ -7,9 +7,9 @@ pipeline{
         maven 'Maven3'
     }
     environment {
-        APP_NAME = "complete-prodcution-e2e-pipeline"
+        APP_NAME = "complete-devops-project"
         RELEASE = "1.0.0"
-        DOCKER_USER = "dmancloud"
+        DOCKER_USER = "yhdm"
         DOCKER_PASS = 'dockerhub'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
@@ -26,7 +26,7 @@ pipeline{
     
         stage("Checkout from SCM"){
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/dmancloud/complete-prodcution-e2e-pipeline'
+                git branch: 'main', credentialsId: 'githubcred', url: 'https://github.com/Mamar04/complete-devops-project.git'
             }
 
         }
