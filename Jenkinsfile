@@ -20,5 +20,19 @@ pipeline{
                 git branch: 'main', credentialsId: 'githubcred', url: 'https://github.com/Mamar04/complete-devops-project.git'
             }
         }
+        
+        stage("Build Application"){
+            steps {
+                sh "mvn clean package"
+            }
+        }
+
+        stage("Test Application"){
+            steps {
+                sh "mvn test"
+            }
+
+        }
+        
     }
 }
