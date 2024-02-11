@@ -2,22 +2,22 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: complete-devops-app
+  name: demoapp
   namespace: default
   labels:
-    app: complete-devops-app
+    app: demoapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: complete-devops-app
+      app: demoapp
   template:
     metadata:
       labels:
-        app: complete-devops-app
+        app: demoapp
     spec:
       containers:
-      - name: complete-devops-app
+      - name: demoapp
         image: "yhdm/complete-devops-project:latest"
         ports:
           - containerPort: 3000
@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: complete-devops-app
+  name: demoapp
   namespace: default
 spec:
   selector:
