@@ -80,27 +80,17 @@ pipeline{
         }
 
         stage('Build & Push with Kaniko') {
-<<<<<<< HEAD
+
               steps {
                 container(name: 'demoapp', shell: '/busybox/sh') {
                   sh '''#!/busybox/sh
         
-                    /deployment/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
+                     --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
                   '''
                 }
               }
             }
              }
-=======
-      steps {
-        container(name: 'kaniko', shell: '/busybox/sh') {
-          sh '''#!/busybox/sh
 
-            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
-          '''
-        }
-      }
-    }
      }
 }   
->>>>>>> eff35d11f19f18f49624a2403c7571feee6b10e5
