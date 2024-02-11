@@ -80,17 +80,18 @@ pipeline{
 
         }
 
-        stage('Deploy to k8s'){
-            steps{
-                script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
-                }
-            }
-        }
-        
-
-        
-        
-
+         stage('Deploy App on k8s') {
+              steps {
+                    sshagent(['k8spwd']) {
+                    sh "scp -o StrictHostKeyChecking=no deploment.yaml vagrant@10.10.10.65:/home/vagrant"
+                    script {
+                        try{
+                            sh "ssh vagrant@10.10.10.65 kubectl create -f ."
+                       }catch(error){
+                            sh "ssh vagrant@10.10.10.65 kubectl create -f ."
+                      }
+                    }
+                  }
+                  
     }
 }
