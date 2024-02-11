@@ -1,9 +1,7 @@
 pipeline{
     agent{
         label "jenkins-agent"
-        kubernetes {
-          yamlFile 'deployment.yaml'
-        }
+        yamlFile 'kaniko-builder.yaml'
     }
         tools {
             jdk 'Java17'
