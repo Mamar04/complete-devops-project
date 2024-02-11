@@ -2,28 +2,28 @@ pipeline{
     agent{
         label "jenkins-agent"
     }
-    tools {
-        jdk 'Java17'
-        maven 'Maven3'
-    }
-
-  environment {
-        APP_NAME = "complete-devops-project"
-        RELEASE = "1.0.0"
-        DOCKER_USER = "yhdm"
-        DOCKER_PASS = 'dockerhubcred'
-        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-
-    }   
-    stages{
-        stage("Cleanup Workspace"){
-            steps {
-                cleanWs()
-            }
-
+        tools {
+            jdk 'Java17'
+            maven 'Maven3'
         }
+
+      environment {
+            APP_NAME = "complete-devops-project"
+            RELEASE = "1.0.0"
+            DOCKER_USER = "yhdm"
+            DOCKER_PASS = 'dockerhubcred'
+            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+            IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+            
+        }   
+        stages{
+            stage("Cleanup Workspace"){
+                steps {
+                    cleanWs()
+                }
     
+            }
+        
         stage("Connection github"){
             steps {
                 git branch: 'main', credentialsId: 'githubcred', url: 'https://github.com/Mamar04/complete-devops-project.git'
@@ -77,20 +77,16 @@ pipeline{
                     }
                 }
             }
-
         }
 
-        stage('Deploy to k8s'){
-            steps{
-                script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
+        stage('Build & Push with Kaniko') {
+              steps {
+                container(name: 'demoapp', shell: '/busybox/sh') {
+                  sh '''#!/busybox/sh
+        
+                    /deployment/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
+                  '''
                 }
+              }
             }
-        }
-        
-
-        
-        
-
-    }
-}
+             }
