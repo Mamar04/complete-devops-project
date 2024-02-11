@@ -1,12 +1,10 @@
 pipeline{
     agent{
         label "jenkins-agent"
+        kubernetes {
+          yamlFile 'deployment.yaml'
         }
-    agent {
-    kubernetes {
-      yamlFile 'deployment.yaml'
     }
-  }
         tools {
             jdk 'Java17'
             maven 'Maven3'
