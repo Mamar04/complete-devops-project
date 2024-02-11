@@ -83,7 +83,7 @@ pipeline {
                             )
                         ],
                         volumes: [
-                            secretVolume(secretName: 'DOCKER_PASS', mountPath: '/root/.docker')
+                            secretVolume(secretName: 'docker-credentials', mountPath: '/root/.docker')
                         ]
                     ) {
                         node('mypod') {
