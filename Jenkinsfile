@@ -60,7 +60,7 @@ pipeline {
                 
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_USER, DOCKER_PASS) {
+                    docker.withRegistry([credentialsId: 'dockerhubcred']) {
                         def docker_image = docker.build("${IMAGE_NAME}")
                         docker_image.push("${IMAGE_TAG}")
                         docker_image.push('latest')
