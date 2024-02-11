@@ -85,10 +85,10 @@ pipeline{
                     sh "scp -o StrictHostKeyChecking=no deployment.yaml vagrant@10.10.10.65:/home/vagrant"
                     script {
                         try {
-                            sh "ssh vagrant@10.10.10.65 kubectl create -f /home/vagrant/deployment.yaml"
+                            sh "ssh vagrant@10.10.10.65 kubectl create -f /home/vagrant/deployment.yml"
                         } catch(error) {
                             sleep 30 // Add a delay of 30 seconds before retrying
-                            sh "ssh vagrant@10.10.10.65 kubectl create -f /home/vagrant/deployment.yaml"
+                            sh "ssh vagrant@10.10.10.65 kubectl create -f /home/vagrant/deployment.yml"
                         }
                     }
                 }
