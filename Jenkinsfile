@@ -59,14 +59,14 @@ pipeline {
         stage("Build & Push Docker Image") {
                 
             steps {
-                script {
-                    docker.withRegistry([url: "", credentialsId: 'dockerhubcred']) {
-                        def docker_image = docker.build("${IMAGE_NAME}")
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
-                            }
-                }
+        script {
+            docker.withRegistry([url: "", credentialsId: 'dockerhubcred']) {
+                def customImage = docker.build("${IMAGE_NAME}")
+                customImage.push("${IMAGE_TAG}")
+                customImage.push('latest')
             }
+        }
+    }
         }
 
         stage('Build & Push k8scluster') {
