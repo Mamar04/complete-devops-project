@@ -43,15 +43,11 @@ pipeline {
 
         stage("Sonarqube Analysis") {
             steps {
-               withSonarQubeEnv(installationName: 'sonarqube-scanner', credentialsId: 'sonar-token') {
+                withSonarQubeEnv(installationName: 'sonarqube-scanner', credentialsId: 'sonar-token') {
                     sh "mvn sonar:sonar"
                 }
             }
         }
-
-       
-}
-
 
         stage("Quality Gate") {
             steps {
@@ -101,3 +97,4 @@ pipeline {
             }
         }
     }
+}
