@@ -79,18 +79,32 @@ pipeline{
             }
         }
 
-        stage('Build & Push with Kaniko') {
-
-              steps {
-                container(name: 'demoapp', shell: '/busybox/sh') {
-                  sh '''#!/busybox/sh
-        
-                     --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
-                  '''
+                stage('Build & Push k8scluster') {
+            steps {
+                script {
+                    podTemplate(
+                        label: 'mypod',
+                        containers: [
+                            containerTemplate(
+                                name: 'demoapp',
+                                image: 'yhdm/complete-devops-project:latest',
+                                command: ['/busybox/sh'],
+                                ttyEnabled: true
+                            )
+                        ],
+                        volumes: [
+                            secretVolume(secretName: 'docker-credentials', mountPath: '/root/.docker')
+                        ]
+                    ) {
+                        node('mypod') {
+                            container('demoapp') {
+                                sh '''#!/busybox/sh
+                                   /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
+                                '''
+                            }
+                        }
+                    }
                 }
-              }
             }
-             }
-
      }
 }   
