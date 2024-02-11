@@ -83,7 +83,9 @@ pipeline{
         stage('Deploy App on k8s') {
             steps {
                 sshagent(['k8spwd']) {
-                    sh "scp -o StrictHostKeyChecking=no /home/vagrant/complete-devops-project/deployment.yaml vagrant@10.10.10.65:/home/vagrant"
+                    sh 'echo $PWD'
+                    sh 'ssh -t -t vagrant@10.10.10.63 -o StrictHostKeyChecking=no "echo pwd && cd /home/vagrant/complete-devops-project"
+                    sh "scp -v -o StrictHostKeyChecking=no deployment.yaml vagrant@10.10.10.65:/home/vagrant"
                     script {
                         try {
                             sh "ssh vagrant@10.10.10.65 kubectl create -f /home/vagrant/deployment.yml"
