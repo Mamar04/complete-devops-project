@@ -14,6 +14,7 @@ pipeline {
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         KUBE_CONFIG = credentials('b72377b4-c4e0-4053-8f92-de072945e679')
+     
     }
 
     stages {
@@ -56,6 +57,7 @@ pipeline {
         }
         
         stage("Build & Push Docker Image") {
+                
             steps {
                 script {
                     docker.withRegistry('', DOCKER_PASS) {
@@ -81,7 +83,7 @@ pipeline {
                             )
                         ],
                         volumes: [
-                            secretVolume(secretName: 'docker-credentials', mountPath: '/root/.docker')
+                            secretVolume(secretName: 'DOCKER_PASS', mountPath: '/root/.docker')
                         ]
                     ) {
                         node('mypod') {
