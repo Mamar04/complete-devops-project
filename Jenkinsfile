@@ -2,6 +2,11 @@ pipeline{
     agent{
         label "jenkins-agent"
         }
+    agent {
+    kubernetes {
+      yamlFile 'kaniko-builder.yaml'
+    }
+  }
         tools {
             jdk 'Java17'
             maven 'Maven3'
@@ -79,22 +84,15 @@ pipeline{
             }
         }
 
-        stage('Deploy App on k8s') {
-        steps {
-            sshagent(['k8spwd']) {
-                sh "scp -v -o StrictHostKeyChecking=no /home/vagrant/complete-devops-project/deployment.yml vagrant@10.10.10.65:/home/vagrant"
-                script {
-                    try {
-                        // Assuming demoapp.jar is the artifact and not a Kubernetes YAML file
-                        sh "ssh vagrant@10.10.10.65 kubectl create deployment demoapp --image=yhdm/complete-devops-project"
-                    } catch(error) {
-                        sleep 30 // Add a delay of 30 seconds before retrying
-                        sh "ssh vagrant@10.10.10.65 kubectl create deployment demoapp --image=yhdm/complete-devops-project"
-                    }
-                }
-            }
-        }
-    }
+        stage('Build & Push with Kaniko') {
+      steps {
+        container(name: 'kaniko', shell: '/busybox/sh') {
+          sh '''#!/busybox/sh
 
+            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
+          '''
+        }
+      }
+    }
      }
 }   
