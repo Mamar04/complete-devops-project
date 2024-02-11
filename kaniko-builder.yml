@@ -1,8 +1,8 @@
 kind: Pod
 spec:
   containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
+  - name: demoapp
+    image: yhdm/complete-devops-project:latest
     imagePullPolicy: Always
     command:
     - sleep
@@ -10,7 +10,7 @@ spec:
     - 9999999
     volumeMounts:
       - name: jenkins-docker-cfg
-        mountPath: /kaniko/.docker
+        mountPath: /demoapp/.docker
   volumes:
   - name: jenkins-docker-cfg
     projected:
