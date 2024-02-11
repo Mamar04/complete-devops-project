@@ -1,7 +1,5 @@
 pipeline{
-    agent{
-        label "jenkins-agent"
-    }
+    agent any
         tools {
             jdk 'Java17'
             maven 'Maven3'
@@ -14,8 +12,8 @@ pipeline{
             DOCKER_PASS = 'dockerhubcred'
             IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
             IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+            KUBE_CONFIG = credentials('b72377b4-c4e0-4053-8f92-de072945e679')
             
-        }   
         stages{
             stage("Cleanup Workspace"){
                 steps {
