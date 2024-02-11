@@ -79,20 +79,22 @@ pipeline{
             }
         }
 
-    stage('Deploy App on k8s') {
-    steps {
-        sshagent(['k8spwd']) {
-            sh "scp -v -o StrictHostKeyChecking=no /home/vagrant/complete-devops-project/target/deployment.yaml vagrant@10.10.10.65:/home/vagrant"
-            script {
-                try {
-                    sh "ssh vagrant@10.10.10.65 kubectl create -f /home/vagrant/deployment.yaml"
-                } catch(error) {
-                    sleep 30 // Add a delay of 30 seconds before retrying
-                    sh "ssh vagrant@10.10.10.65 kubectl create -f /home/vagrant/deployment.yaml"
+        stage('Deploy App on k8s') {
+        steps {
+            sshagent(['k8spwd']) {
+                sh "scp -v -o StrictHostKeyChecking=no /home/vagrant/complete-devops-project/target/demoapp.jar vagrant@10.10.10.65:/home/vagrant"
+                script {
+                    try {
+                        // Assuming demoapp.jar is the artifact and not a Kubernetes YAML file
+                        sh "ssh vagrant@10.10.10.65 kubectl create deployment demoapp --image=/home/vagrant/demoapp.jar"
+                    } catch(error) {
+                        sleep 30 // Add a delay of 30 seconds before retrying
+                        sh "ssh vagrant@10.10.10.65 kubectl create deployment demoapp --image=/home/vagrant/demoapp.jar"
+                    }
                 }
             }
         }
     }
-}
+
      }
 }   
