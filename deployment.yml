@@ -1,10 +1,37 @@
-apiVersion: v1
-kind: Pod
+---
+kind: Deployment
+apiVersion: apps/v1
 metadata:
-   name: redis-pod
+  name: nodejs-app
+  namespace: default
+  labels:
+    app: complete-devops-app
 spec:
-   containers:
-   - name: redis-container01
-     image: yhdm/complete-devops-project
-     ports:
-     - containerPort: 6379
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+      - name: nodejs-app
+        image: "yhdm/complete-devops-project:latest"
+        ports:
+          - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: complete-devops-app
+  namespace: default
+spec:
+  selector:
+    app: yhdm/complete-devops-project
+  type: LoadBalancer
+  ports:
+  - name: http
+    targetPort: 3000
+    port: 80
