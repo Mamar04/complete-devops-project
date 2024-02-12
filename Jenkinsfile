@@ -78,7 +78,7 @@ pipeline {
                             containerTemplate(
                                 name: 'demoapp',
                                 image: 'yhdm/complete-devops-project:latest',
-                                command: ['/busybox/sh'],
+                                command: '/busybox/sh',
                                 ttyEnabled: true
                             )
                         ],
