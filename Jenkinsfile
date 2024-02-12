@@ -54,7 +54,20 @@ pipeline {
                         waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
                     }
                 }
-        
+
+        stage("Build & Push Docker Image") {
+                
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhubcred') {
+                        def customImage = docker.build("${IMAGE_NAME}")
+                        customImage.push("${IMAGE_TAG}")
+                        customImage.push('latest')
+                    }
+                }
             }
         }
+        
+     }
+ }
  
