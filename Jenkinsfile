@@ -14,13 +14,14 @@ pipeline {
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         KUBE_CONFIG = credentials('b72377b4-c4e0-4053-8f92-de072945e679')
-     
     }
+    
     stages {
         stage("Cleanup Workspace") {
             steps {
                 cleanWs()
             }
+        }
         
         stage("Connection github") {
             steps {
@@ -49,13 +50,12 @@ pipeline {
         }
 
         stage("Quality Gate") {
-                    steps {
-                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
-                    }
-                }
+            steps {
+                waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+            }
+        }
 
         stage("Build & Push Docker Image") {
-                
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhubcred') {
@@ -67,37 +67,34 @@ pipeline {
             }
         }
 
-
-            stage('Build & Push k8scluster') {
-                        steps {
-                            script {
-                                podTemplate(
-                                    label: 'k8scluster',
-                                    containers: [
-                                        containerTemplate(
-                                            name: 'demoapp',
-                                            image: 'yhdm/complete-devops-project:latest',
-                                            command: '/busybox/sh',
-                                            ttyEnabled: true
-                                        )
-                                    ],
-                                    volumes: [
-                                        secretVolume(secretName: 'docker-credentials', mountPath: '/root/.docker')
-                                    ]
-                                ) {
-                                    node('mypod') {
-                                        container('demoapp') {
-                                            sh '''
-                                                #!/busybox/sh
-                                                /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
-                                            '''
-                                        }
-                                    }
-                                }
+        stage('Build & Push k8scluster') {
+            steps {
+                script {
+                    podTemplate(
+                        label: 'k8scluster',
+                        containers: [
+                            containerTemplate(
+                                name: 'demoapp',
+                                image: 'yhdm/complete-devops-project:latest',
+                                command: '/busybox/sh',
+                                ttyEnabled: true
+                            )
+                        ],
+                        volumes: [
+                            secretVolume(secretName: 'docker-credentials', mountPath: '/root/.docker')
+                        ]
+                    ) {
+                        node('mypod') {
+                            container('demoapp') {
+                                sh '''
+                                    #!/busybox/sh
+                                    /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
+                                '''
                             }
                         }
                     }
-
+                }
+            }
         }
-}
     }
+}
