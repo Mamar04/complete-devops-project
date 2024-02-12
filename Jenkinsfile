@@ -40,61 +40,6 @@ pipeline {
                 sh "mvn test"
             }
         }
-
-        stage("Sonarqube Analysis") {
-            steps {
-                withSonarQubeEnv(installationName: 'sonarqube-scanner', credentialsId: 'sonar-token') {
-                    sh "mvn sonar:sonar"
-                }
-            }
-        }
-
-        stage("Quality Gate") {
-            steps {
-                waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
-            }
-        }
-        
-        stage("Build & Push Docker Image") {
-                
-            steps {
-        script {
-            docker.withRegistry('https://registry.hub.docker.com', 'dockerhubcred') {
-                def customImage = docker.build("${IMAGE_NAME}")
-                customImage.push("${IMAGE_TAG}")
-                customImage.push('latest')
-            }
-        }
-    }
-        }
-
-        stage('Build & Push k8scluster') {
-            steps {
-                script {
-                    podTemplate(
-                        label: 'k8scluster',
-                        containers: [
-                            containerTemplate(
-                                name: 'demoapp',
-                                image: 'yhdm/complete-devops-project:latest',
-                                command: '/busybox/sh',
-                                ttyEnabled: true
-                            )
-                        ],
-                        volumes: [
-                            secretVolume(secretName: 'docker-credentials', mountPath: '/root/.docker')
-                        ]
-                    ) {
-                        node('mypod') {
-                            container('demoapp') {
-                                sh '''
-                                    #!/busybox/sh
-                                    /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=${IMAGE_NAME}:${IMAGE_TAG} --destination=${IMAGE_NAME}:latest
-                                '''
-                            }
-                        }
-                    }
-                }
             }
         }
     }
