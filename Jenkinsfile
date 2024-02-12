@@ -73,7 +73,7 @@ pipeline {
             steps {
                 script {
                     podTemplate(
-                        label: 'mypod',
+                        label: 'k8scluster',
                         containers: [
                             containerTemplate(
                                 name: 'demoapp',
