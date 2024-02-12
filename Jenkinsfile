@@ -16,7 +16,6 @@ pipeline {
         KUBE_CONFIG = credentials('b72377b4-c4e0-4053-8f92-de072945e679')
      
     }
-
     stages {
         stage("Cleanup Workspace") {
             steps {
