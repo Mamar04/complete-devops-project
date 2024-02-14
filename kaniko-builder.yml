@@ -1,22 +1,33 @@
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp-deployment
 spec:
-  containers:
-  - name: demoapp
-    image: yhdm/complete-devops-project:latest
-    imagePullPolicy: Always
-    command:
-    - sleep
-    args:
-    - 9999999
-    volumeMounts:
-      - name: jenkins-docker-cfg
-        mountPath: /demoapp/.docker
-  volumes:
-  - name: jenkins-docker-cfg
-    projected:
-      sources:
-      - secret:
-          name: docker-credentials
-          items:
-            - key: .dockerconfigjson
-              path: config.json
+  replicas: 3  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: demoapp
+  template:
+    metadata:
+      labels:
+        app: demoapp
+    spec:
+      containers:
+        - name: demoapp
+          image: yhdm/complete-devops-project:latest
+          ports:
+            - containerPort: 3000  # The port your React app is listening on
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demoapp-service
+spec:
+  selector:
+    app: demoapp
+  ports:
+    - protocol: TCP
+      port: 80  # The port exposed by the service within the cluster
+      targetPort: 3000  # The port your React app is listening on inside the pod
+  type: LoadBalancer
