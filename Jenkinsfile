@@ -85,7 +85,7 @@ pipeline {
                     secretVolume(secretName: 'docker-credentials', mountPath: '/root/.docker')
                 ]
             ) {
-                node('k8scluster') {
+                node('node5') {
                     container('demoapp') {
                         sh '''
                             #!/busybox/sh
