@@ -68,9 +68,13 @@ pipeline {
             }
         }
 
-        stage("TRIVY"){
+        stage('Deploy to kubernets'){
             steps{
-                sh "trivy image yhdm/complete-devops-project:latest > trivy.txt" 
+                script{
+                    withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8sclus', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                       sh 'kubectl apply -f kaniko-builder.yaml'
+                  }
+                }
             }
         }
     
