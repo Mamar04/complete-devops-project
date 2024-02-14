@@ -72,7 +72,7 @@ pipeline {
             steps{
                 script{
                     withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8sclus', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
-                       sh 'kubectl apply -f kaniko-builder.yml'
+                       sh 'kubectl apply -f deployment.yml'
                   }
                 }
             }
