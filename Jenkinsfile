@@ -70,7 +70,7 @@ pipeline {
 
         stage('Deploy to container'){
             steps{
-                sh 'docker run -d --name mon_service -p 3100:3100 yhdm/complete-devops-project:latest'
+                sh 'docker run -d --name mon_service -p 3000:3000 yhdm/complete-devops-project:latest'
             }
         }
 
