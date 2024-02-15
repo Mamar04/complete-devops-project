@@ -68,6 +68,13 @@ pipeline {
             }
         }
 
+        stage('Deploy to container'){
+            steps{
+                sh 'docker run -d --name demoapp -p 3000:3000 yhdm/complete-devops-project:latest'
+            }
+        }
+
+
         stage('Deploy to kubernets'){
             steps{
                 script{
